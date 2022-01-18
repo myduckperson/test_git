@@ -49,7 +49,6 @@ export const AuthorizedPopup = () => signInWithPopup(auth, provider);
 //      });
 // };
 
-console.log( await checkUserVersion("dvkRF5fyZZSdUoh9Cb99iq1gH0L2"));
 export const signOutExp = () => signOut(auth);
 export const checkUser = () => console.log(auth.currentUser);
 // При використанні потребує функцію як аргумент
@@ -98,8 +97,8 @@ export async function mergeDocs(uid, userDoc, templateDoc){
     if(!templateDoc){
         templateDoc = ( await getDoc( doc(db, main, template) ) ).data();
     }
-    return mergeObjects(templateDoc, userDoc);
-    // await setDoc(doc(db, main, uid), mergeObjects(templateDoc, userDoc)))
+    // return mergeObjects(templateDoc, userDoc);
+    await setDoc(doc(db, main, uid), mergeObjects(templateDoc, userDoc));
 }
 
 // нажаль ця функція зміннює вхідні об'єкти 
@@ -180,12 +179,10 @@ export async function checkUserOnSignIn(uid, userName){
 
     if(!theDoc){
         return [false, uid, userName];
-        console.log("bruh")
         // createUser(uid, userName);
     }else{
         return [true, theDoc];
         // checkUserVersion(theDoc, null, uid, true);
-        // console.log("double bruh");
     }
 };
 
