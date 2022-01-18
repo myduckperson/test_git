@@ -161,7 +161,7 @@ export async function createUser(uid, userName){
     const templateDocData = (await getDoc(doc(db, main, template))).data();
 
     // зберігає інформацію користувача у локальне сховище
-    localStorage.setItem("userData", `${JSON.stringify(docSnap.data())}`);
+    localStorage.setItem("userData", `${JSON.stringify(templateDocData)}`);
     // let uDoc = templateDoc.dat;
 
     // додає шаблону айді
@@ -225,18 +225,6 @@ export async function tasksLoad(path, tag, uid, userDoc){
 };
 
 
-export async function sendResuld(taskTheme, task, result){
-    const docName = localStorage.getItem("userDataPath");
-    // const localDoc = JSON.parse(localStorage.getItem("userData"));
-    const theDocRef = doc(db, "main", `${docName}`);
-    const theDoc = await getDoc(doc(db, "main", `${docName}`));
-    const theDocTemplate = theDoc.data();
-    // змінює об'єкт отриманої інформації та відправляє цей самий об'єкт
-    // localDoc.tasks[taskTheme][task] = Number(result);
-    theDocTemplate.tasks[taskTheme][task] = Number(result);
-    localStorage.setItem("userData",JSON.stringify(theDocTemplate));
-    await updateDoc(theDocRef, theDocTemplate);
-};
 // Оновлює властивості у поданому через аргументи завданні
 export async function sendResult(taskTheme, task, result, uid, userDocData){
     userDocData = JSON.parse(localStorage.getItem("userData"));
