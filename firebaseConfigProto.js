@@ -27,7 +27,10 @@ const db = getFirestore(app);
 // AuthorizedPopup()
 // .then(() => console.log("bruh"));
 
-
+// Назва колекції документів з якою працює код
+const main = "main";
+// Назва шаблонного документу з якого створюють користувачів
+const template = "template";
 
 export const AuthorizedPopup = () => signInWithPopup(auth, provider);
 
@@ -49,15 +52,21 @@ export const AuthorizedPopup = () => signInWithPopup(auth, provider);
 console.log( await checkUserVersion("dvkRF5fyZZSdUoh9Cb99iq1gH0L2"));
 export const signOutExp = () => signOut(auth);
 export const checkUser = () => console.log(auth.currentUser);
+// При використанні потребує функцію як аргумент
+// При зміні та виході з аккаунту, або при завантаженні сторінки
+// Спрацьовує подана функція
 export const onAuthStateChangedCustom = funct => onAuthStateChanged(auth, funct);
-export async function checkUserVersion(uid, templateString, userDoc, templateDoc){
+export async function checkUserVersion(uid, userDoc, templateDoc){
+// uid - айді користувача
+// userDoc - об'єкт даних користувача
+// templateDoc - об'єкт шаблонних даних
     if(!uid && !userDoc){
         console.error("to check version you have to provide uid or userDoc");
         return;
     }
     if(!userDoc){
         try{
-            userDoc = ( await getDoc( doc(db, "main", uid) ) ).data();      
+            userDoc = ( await getDoc( doc(db, main, uid) ) ).data();      
         }catch(err){
             console.error(err);
             return;
@@ -65,7 +74,7 @@ export async function checkUserVersion(uid, templateString, userDoc, templateDoc
     }
     if(!templateDoc){
         try{
-            templateDoc = ( await getDoc( doc(db, "main", templateString) ) ).data();
+            templateDoc = ( await getDoc( doc(db, main, template) ) ).data();
         }catch(err){
             console.error(err);
         }
@@ -77,18 +86,20 @@ export async function checkUserVersion(uid, templateString, userDoc, templateDoc
     }
 };
 
+
 export async function mergeDocs(uid, userDoc, templateDoc){
     if(!uid && !userDoc){
         console.error("to merge template into userDoc you have to provide uid or userDoc");
         return;
     }
     if(!userDoc){
-        userDoc = ( await getDoc( doc(db, "main", uid) ) ).data();
+        userDoc = ( await getDoc( doc(db, main, uid) ) ).data();
     }
     if(!templateDoc){
-        templateDoc = ( await getDoc( doc(db, "main", "template") ) ).data();
+        templateDoc = ( await getDoc( doc(db, main, template) ) ).data();
     }
     return mergeObjects(templateDoc, userDoc);
+    // await setDoc(doc(db, main, uid), mergeObjects(templateDoc, userDoc)))
 }
 
 // нажаль ця функція зміннює вхідні об'єкти 
@@ -140,8 +151,6 @@ function mergeUnique(arr1, arr2){
     }));
 };
 
-// є можливість прикрутити локальне сховище для templateDocument
-// коли один комп'ютер використовується багатьма учнями
 // Створює документ користувача
 export async function createUser(uid, userName){
     // uid - посилання на документ (userId), отримане при авторизації
@@ -149,7 +158,7 @@ export async function createUser(uid, userName){
 
     // зберігає посилання на інформацію користувача у локальному сховищі
     localStorage.setItem("userDataPath", uid);
-    const templateDocData = (await getDoc(doc(db, "main", "template"))).data();
+    const templateDocData = (await getDoc(doc(db, main, template))).data();
 
     // зберігає інформацію користувача у локальне сховище
     localStorage.setItem("userData", `${JSON.stringify(docSnap.data())}`);
@@ -160,18 +169,19 @@ export async function createUser(uid, userName){
     templateDocData.uid = uid;
 
     // створює інформацію користувача
-    await setDoc(doc(db, "main", uid), templateDocData);
+    await setDoc(doc(db, main, uid), templateDocData);
 };
 
+// Перевіряє чи існує документ даних користувача в базі даних
 export async function checkUserOnSignIn(uid, userName){
     // uid - посилання на документ (userId), отримане при авторизації
     // userName - ім'я користувача, отримане при авторизації
-    const theDoc = (await getDoc( doc(db, "main", uid) )).data();
+    const theDoc = (await getDoc( doc(db, main, uid) )).data();
 
     if(!theDoc){
         return [false, uid, userName];
         console.log("bruh")
-        createUser(uid, userName);
+        // createUser(uid, userName);
     }else{
         return [true, theDoc];
         // checkUserVersion(theDoc, null, uid, true);
@@ -187,12 +197,12 @@ export async function tasksLoad(path, tag, uid, userDoc){
     // tag - HTML тег у якому буде запаковане завдання 
     // uid - посилання на документ (userId)
     if(!userDoc){
-        const docSnap = (await getDoc( doc(db, "main", uid) )).data();  
+        const userDoc = (await getDoc( doc(db, main, uid) )).data();  
     }
     // проходиться по кожній властивості документа
     // потім сортує від найменшого до найбільшого
     // сортування не працює потім пофікшу
-    Object.entries(docSnap.tasks)
+    Object.entries(userDoc.tasks)
     .sort((a,b) => Number(a[0].substring(0,2)) - Number(b[0].substring(0, 2))) 
     .forEach(obj => {
         // із-за того що MAP об'єкт має як назву так і властивості,
@@ -227,13 +237,14 @@ export async function sendResuld(taskTheme, task, result){
     localStorage.setItem("userData",JSON.stringify(theDocTemplate));
     await updateDoc(theDocRef, theDocTemplate);
 };
+// Оновлює властивості у поданому через аргументи завданні
 export async function sendResult(taskTheme, task, result, uid, userDocData){
     userDocData = JSON.parse(localStorage.getItem("userData"));
     const userDocPath = JSON.parse(localStorage.getItem("userDataPath"));
     if(!userDoc && uid && !userDocData){
-        userDocData = (await getDoc( doc(db, "main", uid) )).data();
+        userDocData = (await getDoc( doc(db, main, uid) )).data();
     }else if(!userDoc && !uid && !userDocData && userDocPath){
-        userDocData = (await getDoc( doc(db, "main", userDocPath) )).data();
+        userDocData = (await getDoc( doc(db, main, userDocPath) )).data();
     }
     userDocData.tasks[taskTheme][task] = Number(result);
     localStorage.setItem("userData",JSON.stringify(userDocData));
