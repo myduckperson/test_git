@@ -34,21 +34,6 @@ const template = "template";
 
 export const AuthorizedPopup = () => signInWithPopup(auth, provider);
 
-// How AuthorizedPopupDec would look like without usage of arrow function
-
-// export const AuthorizedPopupDec = function(){
-//     return new Promise(
-//     function(resolve,reject){
-//          signInWithPopup(auth, provider)
-//          .then(function(result) {
-//              resolve(result)
-//          })
-//          .catch(function(err) {
-//              reject(err)
-//          })
-//      });
-// };
-
 export const signOutExp = () => signOut(auth);
 export const checkUser = () => console.log(auth.currentUser);
 // При використанні потребує функцію як аргумент
@@ -78,6 +63,7 @@ export async function checkUserVersion(uid, userDoc, templateDoc){
             console.error(err);
         }
     }
+    console.log(templateDoc.version == userDoc.version, templateDoc.version, userDoc);
     if(templateDoc.version == userDoc.version){
         return [true, userDoc, templateDoc];
     }else{
@@ -112,7 +98,7 @@ export function mergeObjects(mergeFrom,mergeIn){
     // (припускається, що mergeFrom має більше властивостей, ніж mergeIn)
     Object.entries(mergeFrom).forEach(property => {
         // console.log(mergeIn);
-        const mergeInPropertyObj = mergeIn[`${property[0]}`];
+        const mergeInPropertyObj = mergeIn[property[0]];
         const mergeFromPropertyObj = property[1];
         if(
             typeof property == "object" &&
@@ -160,7 +146,7 @@ export async function createUser(uid, userName){
     const templateDocData = (await getDoc(doc(db, main, template))).data();
 
     // зберігає інформацію користувача у локальне сховище
-    localStorage.setItem("userData", `${JSON.stringify(templateDocData)}`);
+    localStorage.setItem("userData", JSON.stringify(templateDocData));
     // let uDoc = templateDoc.dat;
 
     // додає шаблону айді
