@@ -83,8 +83,12 @@ export async function mergeDocs(uid, userDoc, templateDoc){
     if(!templateDoc){
         templateDoc = ( await getDoc( doc(db, main, template) ) ).data();
     }
+    console.log(templateDoc, userDoc);
+    userDoc.version = templateDoc.version;
+    const mergedObject = mergeObjects(templateDoc, userDoc);
+    console.log(mergedObject);
     // return mergeObjects(templateDoc, userDoc);
-    await setDoc(doc(db, main, uid), mergeObjects(templateDoc, userDoc));
+    await setDoc(doc(db, main, uid), mergedObject);
 }
 
 // нажаль ця функція зміннює вхідні об'єкти 
@@ -96,9 +100,12 @@ export function mergeObjects(mergeFrom,mergeIn){
     // mergeIn - об'єкт зі значеннями, які потрібно зберегти
     // проходиться по кожній властивості mergeFrom 
     // (припускається, що mergeFrom має більше властивостей, ніж mergeIn)
+    // console.log(mergeFrom,mergeIn);
+    console.log(JSON.stringify(mergeFrom),JSON.stringify(mergeIn));
     Object.entries(mergeFrom).forEach(property => {
         // console.log(mergeIn);
         const mergeInPropertyObj = mergeIn[property[0]];
+        // console.log(mergeInPropertyObj);
         const mergeFromPropertyObj = property[1];
         if(
             typeof property == "object" &&
@@ -116,13 +123,14 @@ export function mergeObjects(mergeFrom,mergeIn){
         }else if(Array.isArray(mergeFromPropertyObj)){
             // якщо властивість має непримітивне значення (масив)
             // надає властивості шаблонного об'єкту масив неповторних значень
-            mergeFrom[`${property[0]}`] = mergeUnique(mergeFromPropertyObj,mergeInPropertyObj);
+            mergeFrom[property[0]] = mergeUnique(mergeFromPropertyObj,mergeInPropertyObj);
 
-        }else if(mergeInPropertyObj){
+        }else if(mergeInPropertyObj !== undefined || mergeInPropertyObj !== null){
             // якщо властивість має примітивне значення
             // якщо значення другого об'єкту існує
             // надає властивості шаблонного об'єкту значення другого об'єкту
-            mergeFrom[`${property[0]}`] = mergeInPropertyObj;
+            console.log(mergeInPropertyObj, property[0]);
+            mergeFrom[property[0]] = mergeInPropertyObj;
         };
     });
     // повертає зміненний шаблонний об'єкт
@@ -154,6 +162,7 @@ export async function createUser(uid, userName){
     templateDocData.uid = uid;
 
     // створює інформацію користувача
+    console.log(templateDocData);
     await setDoc(doc(db, main, uid), templateDocData);
 };
 

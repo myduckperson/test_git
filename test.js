@@ -22,8 +22,8 @@ const signInPopup = () =>
         // console.log(user);
         checkUserOnSignIn(user.uid, user.displayName)
         .then(returnValue => {
-            if(returnValue[0]){
-                checkUserVersion(user.uid, returnValue[1]);
+            if(returnValue[0] && (checkUserVersion(user.uid, returnValue[1]))[0]){
+                localStorage.setItem("userData", JSON.stringify(returnValue[1]));
             }else{
                 createUser(user.uid, user.displayName);
                 console.log("value set to true");
