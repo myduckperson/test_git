@@ -23,7 +23,7 @@ const signInPopup = () =>
         checkUserOnSignIn(user.uid, user.displayName)
         .then(returnValue => {
             if(returnValue[0] && (checkUserVersion(user.uid, returnValue[1]))[0]){
-                localStorage.setItem("userData", JSON.stringify(returnValue[1]));
+                // localStorage.setItem("userData", JSON.stringify(returnValue[1]));
             }else{
                 createUser(user.uid, user.displayName);
                 console.log("value set to true");
@@ -65,14 +65,15 @@ onAuthStateChangedCustom(async function(user){
     if(user){
         console.log("regular");
         const uid = user.uid;
-        const userDocLocal = JSON.parse(localStorage.getItem("userData"));
+        // const userDocLocal = JSON.parse(localStorage.getItem("userData"));
         // якщо локальні дані не задані (undefined), то 
-        // функція викличе запит для потрібних їй даних 
-        console.log(userDocLocal);
-        const returnValue = await checkUserVersion(uid, userDocLocal);
-        const correctVersion = returnValue[0] // boolean
+        // функція викличе запит для потрібних їй даних  // boolean
         // якщо дані було не задано локально, то для того щоб далі
         // не відсилати запит до бази даних ще раз функція повертаєті що використовувала  
+        
+        console.log(userDocLocal);
+        const returnValue = await checkUserVersion(uid, userDocLocal);
+        const correctVersion = returnValue[0]
         const userDoc = returnValue[1];
         const templateDoc = returnValue[2];
         console.log(returnValue);

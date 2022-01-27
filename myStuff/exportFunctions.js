@@ -170,14 +170,14 @@ export async function createUser(uid, userName){
 export async function checkUserOnSignIn(uid, userName){
     // uid - посилання на документ (userId), отримане при авторизації
     // userName - ім'я користувача, отримане при авторизації
-    const theDoc = (await getDoc( doc(db, main, uid) )).data();
+    const theDoc = (await getDoc( doc(db, main, uid) )).exists();
 
-    if(!theDoc){
-        return [false, uid, userName];
-        // createUser(uid, userName);
-    }else{
+    if(theDoc){
         return [true, theDoc];
         // checkUserVersion(theDoc, null, uid, true);
+    }else{
+        return [false, uid, userName];
+        // createUser(uid, userName);
     }
 };
 

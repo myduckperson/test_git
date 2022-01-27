@@ -1,0 +1,12 @@
+eval("\$_SESSION[\"vrp_count\"] = 3;");
+eval("\$_SESSION[\"vr0_reslt\"] = True;");
+eval("\$_SESSION[\"vr0_error\"] = \"\";");
+eval("\$_SESSION[\"vr0_score\"] = 20;");
+eval("\$_SESSION[\"vr1_reslt\"] = False;");
+eval("\$_SESSION[\"vr1_error\"] = \"App name=181684672860a36bb05a7429.75965571.exe master value: Form_00.exe\";");
+eval("\$_SESSION[\"vr1_score\"] = 20;");
+eval("\$_SESSION[\"vr2_reslt\"] = True;");
+eval("\$_SESSION[\"vr2_error\"] = \"\";");
+eval("\$_SESSION[\"vr2_score\"] = 20;");
+eval("\$_SESSION[\"vr_percent\"] = 66;");
+
