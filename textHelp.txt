@@ -1,1 +1,20 @@
 temporary
+
+
+
+
+
+
+signIn procedure 
+1.   signIn
+2.   AuthStateChanged
+=====> Щоб не викликати запит до бази даних два рази ( на 2 та 3 кроках)
+#=====> Перевірку користувача та версійності повіністю перенесено на 2 крок
+3.   functions after signIn 
+
+
+reload procedure
+1.   AuthStateChanged
+
+
+

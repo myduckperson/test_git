@@ -71,6 +71,20 @@ export async function checkUserVersion(uid, userDoc, templateDoc){
     }
 };
 
+// Перевіряє чи існує документ даних користувача в базі даних
+export async function checkUserOnSignIn(uid, userName){
+    // uid - посилання на документ (userId), отримане при авторизації
+    // userName - ім'я користувача, отримане при авторизації
+    const theDoc = (await getDoc( doc(db, main, uid) )).data();
+
+    if(!theDoc){
+        return [false, uid, userName];
+        // createUser(uid, userName);
+    }else{
+        return [true, theDoc];
+        // checkUserVersion(theDoc, null, uid, true);
+    }
+};
 
 export async function mergeDocs(uid, userDoc, templateDoc){
     if(!uid && !userDoc){
@@ -125,7 +139,7 @@ export function mergeObjects(mergeFrom,mergeIn){
             // надає властивості шаблонного об'єкту масив неповторних значень
             mergeFrom[property[0]] = mergeUnique(mergeFromPropertyObj,mergeInPropertyObj);
 
-        }else if(mergeInPropertyObj !== undefined || mergeInPropertyObj !== null){
+        }else if(mergeInPropertyObj !== undefined && mergeInPropertyObj !== null){
             // якщо властивість має примітивне значення
             // якщо значення другого об'єкту існує
             // надає властивості шаблонного об'єкту значення другого об'єкту
@@ -149,37 +163,21 @@ export async function createUser(uid, userName){
     // uid - посилання на документ (userId), отримане при авторизації
     // userName - ім'я користувача, отримане при авторизації
 
-    // зберігає посилання на інформацію користувача у локальному сховищі
-    localStorage.setItem("userDataPath", uid);
+
     const templateDocData = (await getDoc(doc(db, main, template))).data();
 
     // зберігає інформацію користувача у локальне сховище
-    localStorage.setItem("userData", JSON.stringify(templateDocData));
-    // let uDoc = templateDoc.dat;
+   // let uDoc = templateDoc.dat;
 
     // додає шаблону айді
     templateDocData.userName = userName;
     templateDocData.uid = uid;
 
     // створює інформацію користувача
-    console.log(templateDocData);
     await setDoc(doc(db, main, uid), templateDocData);
+    return templateDocData;
 };
 
-// Перевіряє чи існує документ даних користувача в базі даних
-export async function checkUserOnSignIn(uid, userName){
-    // uid - посилання на документ (userId), отримане при авторизації
-    // userName - ім'я користувача, отримане при авторизації
-    const theDoc = (await getDoc( doc(db, main, uid) )).data();
-
-    if(!theDoc){
-        return [false, uid, userName];
-        // createUser(uid, userName);
-    }else{
-        return [true, theDoc];
-        // checkUserVersion(theDoc, null, uid, true);
-    }
-};
 
 
 
