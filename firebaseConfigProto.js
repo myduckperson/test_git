@@ -162,9 +162,8 @@ function mergeUnique(arr1, arr2){
 export async function createUser(uid, userName){
     // uid - посилання на документ (userId), отримане при авторизації
     // userName - ім'я користувача, отримане при авторизації
-
-
-    const templateDocData = (await getDoc(doc(db, main, template))).data();
+    
+    const templateDocData = (await getDoc(doc(db, "main", "template"))).data();
 
     // зберігає інформацію користувача у локальне сховище
    // let uDoc = templateDoc.dat;
@@ -174,7 +173,7 @@ export async function createUser(uid, userName){
     templateDocData.uid = uid;
 
     // створює інформацію користувача
-    await setDoc(doc(db, main, uid), templateDocData);
+    await setDoc(doc(db, "main", uid), templateDocData);
     return templateDocData;
 };
 
